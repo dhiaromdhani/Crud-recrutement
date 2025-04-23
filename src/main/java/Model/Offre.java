@@ -1,0 +1,61 @@
+package Model;
+
+public class Offre {
+    private int id;
+    private String titre;
+    private String description;
+    private String localisation;
+    private String datePublication;
+
+    public Offre(int id, String titre, String description, String localisation, String datePublication) {
+        this.id = id;
+        this.titre = titre;
+        this.description = description;
+        this.localisation = localisation;
+        this.datePublication = datePublication;
+    }
+    public Offre() {}
+    public int getId() {
+        return id;
+    }
+
+    public String getTitre() {
+        return titre;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLocalisation() {
+        return localisation;
+    }
+
+    public String getDatePublication() {
+        return datePublication;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setLocalisation(String localisation) {
+        this.localisation = localisation;
+    }
+
+    public void setDatePublication(String datePublication) {
+        this.datePublication = datePublication;
+    }
+
+
+}
+
+
