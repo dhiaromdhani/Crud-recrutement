@@ -5,18 +5,31 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-    private static final String URL = "jdbc:mysql://localhost:3306/recrutement_db"; // URL de ta base de données
-    private static final String USER = "root"; // Utilisateur MySQL
-    private static final String PASSWORD = ""; // Mot de passe MySQL
 
-    public static Connection getConnection() {
+    private static Database instance;
+    private  final String URL = "jdbc:mysql://localhost:3306/recrutement_db";
+    private final String USER = "root";
+    private final String PASSWORD = "";
+    private Connection con;
+
+    private Database() {
         try {
-            // Charger le driver JDBC
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            return DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            con = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Connected to database");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
-}
+
+
+    public static Database getInstance() {
+        if (instance == null) {
+            instance = new Database();
+        }
+        return instance;
+        }
+        public Connection getConnection() {
+        return con;
+        }
+    }
+

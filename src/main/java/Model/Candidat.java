@@ -7,3 +7,5 @@ public class Candidat {
     private String email;
     private String tel;
 }
+
+

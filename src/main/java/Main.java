@@ -7,6 +7,8 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+
+
         Scanner scanner = new Scanner(System.in);
         Service offreDAO = new Service();
         boolean continueLoop = true;
@@ -21,11 +23,11 @@ public class Main {
             System.out.print("Votre choix: ");
 
             int choix = scanner.nextInt();
-            scanner.nextLine();  // Consomme le \n restant après nextInt()
+            scanner.nextLine();
 
             switch (choix) {
                 case 1:
-                    // Ajouter une offre
+
                     System.out.print("Titre: ");
                     String titre = scanner.nextLine();
                     System.out.print("Description: ");
@@ -36,12 +38,12 @@ public class Main {
                     String datePublication = scanner.nextLine();
 
                     Offre nouvelleOffre = new Offre(0, titre, description, localisation, datePublication);
-                    offreDAO.ajouterOffre(nouvelleOffre);
+                    offreDAO.add(nouvelleOffre);
                     break;
 
                 case 2:
-                    // Lister les offres
-                    List<Offre> offres = offreDAO.listerOffres();
+
+                    List<Offre> offres = offreDAO.getAll();
                     if (offres.isEmpty()) {
                         System.out.println("Aucune offre trouvée.");
                     } else {
@@ -52,10 +54,9 @@ public class Main {
                     break;
 
                 case 3:
-                    // Modifier une offre
                     System.out.print("ID de l'offre à modifier: ");
                     int idModifier = scanner.nextInt();
-                    scanner.nextLine();  // Consomme le \n restant
+                    scanner.nextLine();
 
                     System.out.print("Nouveau titre: ");
                     String nouveauTitre = scanner.nextLine();
@@ -67,18 +68,23 @@ public class Main {
                     String nouvelleDate = scanner.nextLine();
 
                     Offre offreAModifier = new Offre(idModifier, nouveauTitre, nouvelleDescription, nouvelleLocalisation, nouvelleDate);
-                    offreDAO.modifierOffre(offreAModifier);
+                    offreDAO.update(offreAModifier);
                     break;
 
                 case 4:
-                    // Supprimer une offre
+
                     System.out.print("ID de l'offre à supprimer: ");
                     int idSupprimer = scanner.nextInt();
-                    offreDAO.supprimerOffre(idSupprimer);
+
+                    Offre offreASupprimer = new Offre();
+                    offreASupprimer.setId(idSupprimer);
+
+
+                    offreDAO.delete(offreASupprimer);
                     break;
 
                 case 5:
-                    // Quitter
+
                     continueLoop = false;
                     break;
 
