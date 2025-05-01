@@ -33,13 +33,13 @@ public class Service implements IService<Offre> {
 
     public List<Offre> getAll() {
         List<Offre> offres = new ArrayList<>();
-        String sql = "SELECT * FROM offres";
+        String sql = "SELECT * FROM offre";
         try {
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 Offre offre = new Offre();
-                offre.setId(rs.getInt("id"));
+                offre.setIdoffre(rs.getInt("idoffre"));
                 offre.setTitre(rs.getString("titre"));
                 offre.setDescription(rs.getString("description"));
                 offre.setLocalisation(rs.getString("localisation"));
@@ -58,14 +58,14 @@ public class Service implements IService<Offre> {
     @Override
 
     public void update(Offre offre) {
-        String sql = "UPDATE offre SET titre = ?, description = ?, localisation = ?, datePublication = ? WHERE id = ?";
+        String sql = "UPDATE offre SET titre = ?, description = ?, localisation = ?, datePublication = ? WHERE idoffre = ?";
         try {
              PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, offre.getTitre());
             ps.setString(2, offre.getDescription());
             ps.setString(3, offre.getLocalisation());
             ps.setString(4, offre.getDatePublication());
-            ps.setInt(5, offre.getId());
+            ps.setInt(5, offre.getIdoffre());
             ps.executeUpdate();
             System.out.println("Offre modifiée avec succès.");
 
@@ -75,15 +75,16 @@ public class Service implements IService<Offre> {
     }
 
 
-    public void delete(Offre offre ) {
-        String sql = "DELETE FROM offre WHERE id = ?";
-        try (
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, offre.getId());
+    public void delete(Offre offre) {
+        String sql = "DELETE FROM offre WHERE idoffre = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, offre.getIdoffre());
             ps.executeUpdate();
             System.out.println("Offre supprimée avec succès.");
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erreur lors de la suppression de l'offre : " + e.getMessage());
         }
     }
+
+
 }

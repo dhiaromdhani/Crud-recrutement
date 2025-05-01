@@ -1,22 +1,22 @@
 package Model;
 
 public class Offre {
-    private int id;
+    private int idoffre;
     private String titre;
     private String description;
     private String localisation;
     private String datePublication;
 
-    public Offre(int id, String titre, String description, String localisation, String datePublication) {
-        this.id = id;
+    public Offre(int idoffre, String titre, String description, String localisation, String datePublication) {
+        this.idoffre = idoffre;
         this.titre = titre;
         this.description = description;
         this.localisation = localisation;
         this.datePublication = datePublication;
     }
     public Offre() {}
-    public int getId() {
-        return id;
+    public int getIdoffre() {
+        return idoffre;
     }
 
     public String getTitre() {
@@ -35,12 +35,12 @@ public class Offre {
         return datePublication;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdoffre(int idoffre) {
+        this.idoffre = idoffre;
     }
 
-    public void setTitre(String titre) {
-        this.titre = titre;
+    public void setTitre(String titre)
+    { this.titre = titre;
     }
 
     public void setDescription(String description) {
