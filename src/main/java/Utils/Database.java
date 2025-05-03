@@ -1,4 +1,4 @@
-package Dao;
+package Utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,9 +27,9 @@ public class Database {
             instance = new Database();
         }
         return instance;
-        }
-        public Connection getConnection() {
-        return con;
-        }
     }
+    public Connection getConnection() {
+        return con;
+    }
+}
 

@@ -1,10 +1,10 @@
-package Dao;
+package Services;
 import Interfaces.IService;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import Model.Candidat;
-import Model.Offre;
+import Models.Candidat;
+import Utils.Database;
 
 public class ServiceCandidat implements IService<Candidat> {
     private final Connection con;

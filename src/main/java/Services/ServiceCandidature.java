@@ -1,7 +1,8 @@
-package Dao;
+package Services;
 
+import Utils.Database;
 import Interfaces.IService;
-import Model.Candidature;
+import Models.Candidature;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

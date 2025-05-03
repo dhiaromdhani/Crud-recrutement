@@ -1,9 +1,12 @@
-import Dao.Service;
-import Dao.ServiceCandidat;
-import Dao.ServiceCandidature;
-import Model.Offre;
-import Model.Candidat;
-import Model.Candidature;
+package Main;
+import Services.Service;
+import Services.ServiceCandidat;
+import Services.ServiceCandidature;
+import Models.Offre;
+import Models.Candidat;
+import Models.Candidature;
+
+
 
 import java.util.List;
 import java.util.Scanner;
@@ -190,7 +193,7 @@ public class Main {
             }
         }
     }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private static void menuCandidatures(Scanner scanner, ServiceCandidature candidatureDAO) {
         boolean loop = true;
         while (loop) {
