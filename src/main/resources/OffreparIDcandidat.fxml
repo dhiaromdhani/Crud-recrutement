@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.OffreparIDcandidat"
+            prefWidth="600" prefHeight="500">
+
+    <VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+        <HBox spacing="10">
+            <Label text="ID du Candidat :" />
+            <TextField fx:id="idCandidatField" promptText="Ex: 1"/>
+            <Button text="Afficher Offres" onAction="#handleAfficherOffres"/>
+        </HBox>
+
+        <Label text="Liste des Offres" style="-fx-font-size: 16px;" />
+
+        <TableView fx:id="tableOffres" prefHeight="400">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="titreColumn" text="Titre" prefWidth="100"/>
+                <TableColumn fx:id="descColumn" text="Description" prefWidth="150"/>
+                <TableColumn fx:id="locColumn" text="Localisation" prefWidth="100"/>
+                <TableColumn fx:id="dateColumn" text="Date de publication" prefWidth="120"/>
+            </columns>
+        </TableView>
+    </VBox>
+</AnchorPane>

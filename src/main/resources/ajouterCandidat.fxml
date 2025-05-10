@@ -3,30 +3,42 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AjouterCandidatController">
+<AnchorPane prefHeight="500.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Controllers.AjouterCandidatController">
     <children>
         <VBox spacing="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <!-- Champs de saisie du candidat -->
             <HBox spacing="10.0">
                 <TextField fx:id="txtNom" promptText="Nom" />
                 <TextField fx:id="txtPrenom" promptText="Prénom" />
             </HBox>
             <HBox spacing="10.0">
                 <TextField fx:id="txtEmail" promptText="Email" />
-                <TextField fx:id="txtTéléphone" promptText="Téléphone" />
+                <TextField fx:id="txtTelephone" promptText="Téléphone" />
             </HBox>
+            <!-- Date de candidature -->
             <HBox spacing="10.0">
-                <Button onAction="#Ajouter" text="Ajouter" />
-                <Button onAction="#Modifier" text="Modifier" />
-                <Button onAction="#Supprimer" text="Supprimer" />
-                <Button onAction="#Lire" text="Lire" />
+                <Label text="Date de candidature:" />
+                <DatePicker fx:id="dateCandidaturePicker" />
             </HBox>
-            <TableView fx:id="tableCandidats" prefHeight="300">
+            <!-- Boutons CRUD et Valider Demande -->
+            <HBox spacing="10.0">
+                <Button text="Ajouter" fx:id="btnAjouter" onAction="#Ajouter" />
+                <Button text="Modifier" fx:id="btnModifier" onAction="#Modifier" />
+                <Button text="Supprimer" fx:id="btnSupprimer" onAction="#Supprimer" />
+                <Button text="Lire"   fx:id="btnLire"    onAction="#Lire" />
+                <Button text="Valider Demande" fx:id="btnValiderDemande" onAction="#ValiderDemande" />
+            </HBox>
+            <!-- Table des candidats -->
+            <TableView fx:id="tableCandidats" prefHeight="300.0">
                 <columns>
-                    <TableColumn fx:id="idColumn" prefWidth="50" text="ID" />
-                    <TableColumn fx:id="nomColumn" prefWidth="100" text="Nom" />
-                    <TableColumn fx:id="prenomColumn" prefWidth="100" text="Prénom" />
-                    <TableColumn fx:id="emailColumn" prefWidth="150" text="Email" />
-                    <TableColumn fx:id="telColumn" prefWidth="100" text="Téléphone" />
+                    <TableColumn fx:id="idColumn" text="ID" prefWidth="50" />
+                    <TableColumn fx:id="nomColumn" text="Nom" prefWidth="100" />
+                    <TableColumn fx:id="prenomColumn" text="Prénom" prefWidth="100" />
+                    <TableColumn fx:id="emailColumn" text="Email" prefWidth="150" />
+                    <TableColumn fx:id="telColumn" text="Téléphone" prefWidth="100" />
                 </columns>
             </TableView>
         </VBox>

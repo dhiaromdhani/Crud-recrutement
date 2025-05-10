@@ -1,11 +1,17 @@
 package Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Offre {
     private int idoffre;
     private String titre;
     private String description;
     private String localisation;
     private String datePublication;
+
+
+    private List<Candidat> candidats = new ArrayList<>();
 
     public Offre(int idoffre, String titre, String description, String localisation, String datePublication) {
         this.idoffre = idoffre;

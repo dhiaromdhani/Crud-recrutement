@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import Models.Candidat;
+import Models.Offre;
 import Utils.Database;
 
 public class ServiceCandidat implements IService<Candidat> {
@@ -66,6 +67,91 @@ public class ServiceCandidat implements IService<Candidat> {
         }
         return candidats;
     }
+
+
+
+
+    public List<Candidat> getCandidatsByOffre(int idOffre) {
+        List<Candidat> candidats = new ArrayList<>();
+        String sql = ""
+                + "SELECT c.* "
+                + "  FROM candidat c "
+                + "  JOIN candidature ca ON c.idcandidat = ca.idcandidat "
+                + " WHERE ca.idoffre = ?";
+
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idOffre);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Candidat c = new Candidat();
+                    c.setIdCandidat(rs.getInt("idcandidat"));
+                    c.setNom(rs.getString("nom"));
+                    c.setPrenom(rs.getString("prenom"));
+                    c.setEmail(rs.getString("email"));
+                    c.setTel(rs.getString("tel"));
+                    candidats.add(c);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur SQL getCandidatsByOffre : " + e.getMessage());
+        }
+        return candidats;
+    }
+
+
+
+
+    public List<Offre> getOffresByCandidat(int idCandidat) {
+        List<Offre> offres = new ArrayList<>();
+        String sql = "SELECT o.* FROM offre o " + "JOIN candidature ca ON o.idoffre = ca.idoffre " + "WHERE ca.idcandidat = ?";
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idCandidat);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Offre offre = new Offre();
+                offre.setIdoffre(rs.getInt("idoffre"));
+                offre.setTitre(rs.getString("titre"));
+                offre.setDescription(rs.getString("description"));
+                offre.setLocalisation(rs.getString("localisation"));
+                offre.setDatePublication(rs.getString("datePublication"));
+
+                offres.add(offre);
+            }
+
+        } catch (SQLException e)
+        {
+            System.out.println("Erreur SQL : " + e.getMessage());
+        }
+
+        return offres;
+    }
+
+
+    public int postuler(int idCandidat, int idOffre, String dateCandidature) {
+        String sql = "INSERT INTO candidature (idoffre, idcandidat, dateCandidature, statut) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idOffre);
+            ps.setInt(2, idCandidat);
+            ps.setString(3,dateCandidature);
+            ps.setString(4, "En attente");
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    int generatedId = keys.getInt(1);
+                    // Tu peux logger cet ID ou le stocker si tu as besoin de le re‑utiliser
+                    System.out.println("Candidature enregistrée (id interne " + generatedId + ")");
+                    return generatedId;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la candidature : " + e.getMessage());
+        }
+        return -1;
+    }
+
 
     @Override
 

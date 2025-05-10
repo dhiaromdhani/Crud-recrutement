@@ -1,11 +1,16 @@
 package Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Candidat {
     private int idcandidat;
     private String nom;
     private String prenom;
     private String email;
     private String tel;
+
+    private List<Offre> offres = new ArrayList<>();
 
 public Candidat (int idcandidat , String nom, String prenom, String email , String tel)
 {

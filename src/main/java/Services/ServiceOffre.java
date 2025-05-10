@@ -1,4 +1,5 @@
 package Services;
+import Models.Candidat;
 import Utils.Database;
 import Interfaces.IService;
 import Models.Offre;
@@ -6,10 +7,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Service implements IService<Offre> {
+public class ServiceOffre implements IService<Offre> {
     private final Connection con;
+    public Connection getConnection() {
+        return con;
+    }
 
-    public Service() {
+
+    public ServiceOffre() {
         con = Database.getInstance().getConnection();
     }
 
@@ -56,6 +61,62 @@ public class Service implements IService<Offre> {
         return offres;
     }
 
+
+
+    public List<Offre> getOffresByCandidat(int idCandidat) {
+        List<Offre> offres = new ArrayList<>();
+        String sql =
+                "SELECT o.* " + "  FROM offre o " + "  JOIN candidature ca ON o.idoffre = ca.idoffre " + " WHERE ca.idcandidat = ?";
+
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idCandidat);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Offre offre = new Offre();
+                    offre.setIdoffre(rs.getInt("idoffre"));
+                    offre.setTitre(rs.getString("titre"));
+                    offre.setDescription(rs.getString("description"));
+                    offre.setLocalisation(rs.getString("localisation"));
+                    offre.setDatePublication(rs.getString("datePublication"));
+                    offres.add(offre);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur SQL getOffresByCandidat : " + e.getMessage());
+        }
+        return offres;
+    }
+
+    public List<Candidat> getCandidatsByOffre(int idOffre) {
+        List<Candidat> candidats = new ArrayList<>();
+        String sql = "SELECT c.* FROM candidat c " + "JOIN candidature ca ON c.idcandidat = ca.idcandidat " + "WHERE ca.idoffre = ?";
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idOffre);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Candidat candidat = new Candidat();
+                candidat.setIdCandidat(rs.getInt("idcandidat"));
+                candidat.setNom(rs.getString("nom"));
+                candidat.setPrenom(rs.getString("prenom"));
+                candidat.setEmail(rs.getString("email"));
+                candidat.setTel(rs.getString("tel"));
+
+                candidats.add(candidat);
+            }
+
+        } catch (SQLException e)
+        {
+            System.out.println("Erreur SQL : " + e.getMessage());
+        }
+
+        return candidats;
+    }
+
+
+
     @Override
 
     public void update(Offre offre) {
@@ -86,6 +147,9 @@ public class Service implements IService<Offre> {
             System.out.println("Erreur lors de la suppression de l'offre : " + e.getMessage());
         }
     }
+
+
+
 
 
 }

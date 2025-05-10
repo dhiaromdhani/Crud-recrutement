@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.CandidatparIDoffre"
+            prefWidth="600" prefHeight="500">
+
+    <VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+        <HBox spacing="10">
+            <Label text="ID de l'Offre :" />
+            <TextField fx:id="idOffreField" promptText="Ex: 1"/>
+            <Button text="Afficher Candidats" onAction="#handleAfficherCandidats"/>
+        </HBox>
+
+        <Label text="Liste des Candidats" style="-fx-font-size: 16px;" />
+
+        <TableView fx:id="tableCandidats" prefHeight="400">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="nomColumn" text="Nom" prefWidth="100"/>
+                <TableColumn fx:id="prenomColumn" text="Prénom" prefWidth="100"/>
+                <TableColumn fx:id="emailColumn" text="Email" prefWidth="150"/>
+                <TableColumn fx:id="telColumn" text="Téléphone" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+</AnchorPane>

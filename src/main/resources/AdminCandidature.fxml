@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AdminCandidature">
+    <children>
+        <!-- TreeView pour afficher toutes les candidatures depuis la base -->
+        <TreeView fx:id="treeViewCandidatures" layoutX="10.0" layoutY="10.0" prefHeight="320.0" prefWidth="580.0" />
+
+        <!-- Bouton pour recharger/afficher les candidatures -->
+        <Button fx:id="btnAfficher" layoutX="10.0" layoutY="340.0" onAction="#afficherCandidatures" prefWidth="160.0" text="Afficher candidatures" />
+
+        <!-- Boutons pour accepter ou refuser la candidature sélectionnée -->
+        <Button fx:id="btnAccepter" layoutX="200.0" layoutY="340.0" onAction="#accepterCandidature" prefWidth="100.0" text="Accepter" />
+        <Button fx:id="btnRefuser" layoutX="320.0" layoutY="340.0" onAction="#refuserCandidature" prefWidth="100.0" text="Refuser" />
+      <Button layoutX="448.0" layoutY="340.0" mnemonicParsing="false" onAction="#RetourpageAcceuil" prefHeight="26.0" prefWidth="94.0" text="Retour Page Acceuil" />
+    </children>
+</AnchorPane>
