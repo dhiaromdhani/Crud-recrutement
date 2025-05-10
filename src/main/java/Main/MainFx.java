@@ -47,11 +47,11 @@ public class MainFx extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();*/
 
-            Parent root = FXMLLoader.load(getClass().getResource("/PageAccueil.fxml"));
+            /*Parent root = FXMLLoader.load(getClass().getResource("/PageAccueil.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setTitle("Page Accueil");
             primaryStage.setScene(scene);
-            primaryStage.show();
+            primaryStage.show();*/
 
             /*Parent root = FXMLLoader.load(getClass().getResource("/listeOffres.fxml"));
             Scene scene = new Scene(root);
@@ -59,11 +59,11 @@ public class MainFx extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();*/
 
-            /*Parent root = FXMLLoader.load(getClass().getResource("/Guest.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/Guest.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setTitle("Guest");
             primaryStage.setScene(scene);
-            primaryStage.show();*/
+            primaryStage.show();
 
         } catch (IOException e) {
             System.err.println("Erreur de chargement des fichiers FXML : assurez-vous que les chemins sont corrects."+ e.getMessage());

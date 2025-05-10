@@ -101,56 +101,61 @@ public class ServiceCandidat implements IService<Candidat> {
 
 
 
-    public List<Offre> getOffresByCandidat(int idCandidat) {
-        List<Offre> offres = new ArrayList<>();
-        String sql = "SELECT o.* FROM offre o " + "JOIN candidature ca ON o.idoffre = ca.idoffre " + "WHERE ca.idcandidat = ?";
-
-        try {
-            PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setInt(1, idCandidat);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Offre offre = new Offre();
-                offre.setIdoffre(rs.getInt("idoffre"));
-                offre.setTitre(rs.getString("titre"));
-                offre.setDescription(rs.getString("description"));
-                offre.setLocalisation(rs.getString("localisation"));
-                offre.setDatePublication(rs.getString("datePublication"));
-
-                offres.add(offre);
-            }
-
-        } catch (SQLException e)
-        {
-            System.out.println("Erreur SQL : " + e.getMessage());
-        }
-
-        return offres;
-    }
 
 
     public int postuler(int idCandidat, int idOffre, String dateCandidature) {
         String sql = "INSERT INTO candidature (idoffre, idcandidat, dateCandidature, statut) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, idOffre);
             ps.setInt(2, idCandidat);
-            ps.setString(3,dateCandidature);
+            ps.setString(3, dateCandidature);
             ps.setString(4, "En attente");
-            ps.executeUpdate();
+
+            int affected = ps.executeUpdate();
+            if (affected == 0) {
+                System.err.println("Aucune ligne insérée, échec de la création de la candidature.");
+                return -1;
+            }
+
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     int generatedId = keys.getInt(1);
-                    // Tu peux logger cet ID ou le stocker si tu as besoin de le re‑utiliser
                     System.out.println("Candidature enregistrée (id interne " + generatedId + ")");
                     return generatedId;
+                } else {
+                    System.err.println("Aucune clé générée retournée.");
+                    return -1;
                 }
             }
         } catch (SQLException e) {
             System.err.println("Erreur lors de la candidature : " + e.getMessage());
+            return -1;
         }
-        return -1;
     }
+
+
+
+    public Candidat findByEmail(String email) {
+        String sql = "SELECT * FROM candidat WHERE email = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Candidat(
+                        rs.getInt("idcandidat"),
+                        rs.getString("nom"),
+                        rs.getString("prenom"),
+                        rs.getString("email"),
+                        rs.getString("tel")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur findByEmail: " + e.getMessage());
+        }
+        return null;
+    }
+
+
 
 
     @Override

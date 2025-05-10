@@ -2,68 +2,90 @@ package Controllers;
 
 import Models.Offre;
 import Services.ServiceOffre;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class OffreparIDcandidat implements Initializable {
 
-    @FXML
-    private TextField idCandidatField;
-    @FXML
-    private TableView<Offre> tableOffres;
-    @FXML
-    private TableColumn<Offre, Integer> idColumn;
-    @FXML
-    private TableColumn<Offre, String> titreColumn;
-    @FXML
-    private TableColumn<Offre, String> descColumn;
-    @FXML
-    private TableColumn<Offre, String> locColumn;
-    @FXML
-    private TableColumn<Offre, String> dateColumn;
+    @FXML private TextField idCandidatField;
+    @FXML private VBox cardContainer;
 
-    private ObservableList<Offre> offres = FXCollections.observableArrayList();
-    private ServiceOffre serviceOffre = new ServiceOffre();
+    private ServiceOffre serviceOffre;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        idColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getIdoffre()).asObject());
-        titreColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitre()));
-        descColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
-        locColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocalisation()));
-        dateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDatePublication()));
+        serviceOffre = new ServiceOffre();
+    }
+
+
+    @FXML
+    void RetourAceuil(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/PageAccueil.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Page Accueil");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            System.out.println("Erreur ouverture page accueil : " + e.getMessage());
+        }
+
     }
 
     @FXML
-    private void handleAfficherOffres() {
+    private void handleAfficherOffres(ActionEvent event) {
+        cardContainer.getChildren().clear();
+
+        String text = idCandidatField.getText().trim();
+        int idC;
         try {
-            int idCandidat = Integer.parseInt(idCandidatField.getText().trim());
-            List<Offre> list = serviceOffre.getOffresByCandidat(idCandidat);
-            offres.setAll(list);
-            tableOffres.setItems(offres);
-
-            if (list.isEmpty()) {
-                showAlert(Alert.AlertType.INFORMATION, "Aucune offre trouvée pour le candidat ID: " + idCandidat);
-            }
-
+            idC = Integer.parseInt(text);
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Veuillez saisir un ID valide (nombre entier).");
+            new Alert(Alert.AlertType.WARNING, "ID invalide, entrez un nombre entier.").showAndWait();
+            return;
         }
-    }
 
-    private void showAlert(Alert.AlertType type, String message) {
-        Alert alert = new Alert(type);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        List<Offre> offres = serviceOffre.getOffresByCandidat(idC);
+        if (offres.isEmpty()) {
+            new Alert(Alert.AlertType.INFORMATION, "Aucune offre trouvée pour ce candidat.").showAndWait();
+            return;
+        }
+
+        // Pour chaque offre, créer une carte HBox
+        for (Offre o : offres) {
+            HBox card = new HBox(10);
+            card.setPadding(new Insets(10));
+            card.setStyle("-fx-background-color:#f9f9f9; -fx-border-color:#ccc;");
+
+            VBox info = new VBox(4);
+            info.getChildren().addAll(
+                    new Label("ID Offre      : " + o.getIdoffre()),
+                    new Label("Titre         : " + o.getTitre()),
+                    new Label("Description   : " + o.getDescription()),
+                    new Label("Localisation  : " + o.getLocalisation()),
+                    new Label("Date Publi.   : " + o.getDatePublication())
+            );
+
+            card.getChildren().add(info);
+            cardContainer.getChildren().add(card);
+        }
+
     }
 }

@@ -6,51 +6,42 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ResourceBundle;
 
 public class AdminCandidature implements Initializable {
 
-    @FXML private TreeView<String> treeViewCandidatures;
-    @FXML private Button btnAfficher;
-    @FXML private Button btnAccepter;
-    @FXML private Button btnRefuser;
+    @FXML
+    private VBox cardContainer;
+
+    @FXML
+    private Button btnAfficher, btnAccepter, btnRefuser;
 
     private Admin adminService;
     private Connection con;
+
+    private int selectedIdCandidat = -1;
+    private int selectedIdOffre = -1;
+    private HBox selectedCard = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         con = Database.getInstance().getConnection();
         adminService = new Admin(con);
-        configureTree();
         loadCandidatures();
-    }
-
-    private void configureTree() {
-        treeViewCandidatures.setShowRoot(false);
-        treeViewCandidatures.setCellFactory(tv -> new TreeCell<String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null : item);
-            }
-        });
     }
 
     @FXML
@@ -59,14 +50,14 @@ public class AdminCandidature implements Initializable {
     }
 
     private void loadCandidatures() {
-        TreeItem<String> root = new TreeItem<>();
-        root.setExpanded(true);
+        cardContainer.getChildren().clear();
         String sql = "SELECT ca.idcandidat, ca.idoffre, c.nom, c.prenom, o.titre, ca.dateCandidature, ca.statut " +
                 "FROM candidature ca " +
                 "JOIN candidat c ON ca.idcandidat = c.idcandidat " +
                 "JOIN offre o ON ca.idoffre = o.idoffre";
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 int idC = rs.getInt("idcandidat");
                 int idO = rs.getInt("idoffre");
@@ -75,58 +66,71 @@ public class AdminCandidature implements Initializable {
                 String titre = rs.getString("titre");
                 String date = rs.getString("dateCandidature");
                 String statut = rs.getString("statut");
-                // Format: idC|idO|Nom Prenom - Titre (statut) | Date
-                String label = idC + "|" + idO + "|" + nom + " " + prenom + " - " + titre + " (" + statut + ") [" + date + "]";
-                TreeItem<String> node = new TreeItem<>(label);
-                root.getChildren().add(node);
+
+                // Création de la carte HBox
+                HBox card = new HBox(10);
+                card.setPadding(new Insets(10));
+                card.setStyle("-fx-background-color: #f2f2f2; -fx-border-color: #ccc;");
+
+                Label label = new Label(nom + " " + prenom + " - " + titre +
+                        " (" + statut + ") [" + date + "]");
+                card.getChildren().add(label);
+
+                // Événement de sélection
+                card.setOnMouseClicked(e -> {
+                    selectedIdCandidat = idC;
+                    selectedIdOffre = idO;
+                    selectedCard = card;
+
+                    // surbrillance
+                    for (Node node : cardContainer.getChildren()) {
+                        node.setStyle("-fx-background-color: #f2f2f2; -fx-border-color: #ccc;");
+                    }
+                    card.setStyle("-fx-background-color: #d0f0d0; -fx-border-color: #00aa00;");
+                });
+
+                cardContainer.getChildren().add(card);
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur SQL", e.getMessage());
         }
-        treeViewCandidatures.setRoot(root);
     }
 
     @FXML
     private void accepterCandidature(ActionEvent event) {
-        updateSelected("Acceptée");
+        updateStatut("Acceptée");
     }
 
     @FXML
     private void refuserCandidature(ActionEvent event) {
-        updateSelected("Refusée");
+        updateStatut("Refusée");
     }
 
-    private void updateSelected(String nouveauStatut) {
-        TreeItem<String> sel = treeViewCandidatures.getSelectionModel().getSelectedItem();
-        if (sel != null && sel.getValue() != null) {
-            String[] parts = sel.getValue().split("\\|");
-            int idC = Integer.parseInt(parts[0]);
-            int idO = Integer.parseInt(parts[1]);
-            adminService.changerStatutCandidature(idC, idO, nouveauStatut);
-            showAlert(AlertType.INFORMATION, "Succès", "Statut mis à jour : " + nouveauStatut);
-            loadCandidatures();
+    private void updateStatut(String statut) {
+        if (selectedIdCandidat != -1 && selectedIdOffre != -1) {
+            adminService.changerStatutCandidature(selectedIdCandidat, selectedIdOffre, statut);
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Statut mis à jour : " + statut);
+            loadCandidatures(); // recharge les cartes
         } else {
-            showAlert(AlertType.WARNING, "Aucune sélection", "Veuillez sélectionner une candidature.");
+            showAlert(Alert.AlertType.WARNING, "Aucune sélection", "Veuillez sélectionner une candidature.");
         }
     }
-
-
 
     @FXML
     void RetourpageAcceuil(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/PageAccueil.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Page Acceuil");
+            stage.setTitle("Page Accueil");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-           System.out.println(e.getMessage());
+            System.out.println("Erreur ouverture page accueil : " + e.getMessage());
         }
-
     }
 
-    private void showAlert(AlertType type, String title, String content) {
+    private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);

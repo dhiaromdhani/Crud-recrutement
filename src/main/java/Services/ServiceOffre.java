@@ -87,33 +87,6 @@ public class ServiceOffre implements IService<Offre> {
         return offres;
     }
 
-    public List<Candidat> getCandidatsByOffre(int idOffre) {
-        List<Candidat> candidats = new ArrayList<>();
-        String sql = "SELECT c.* FROM candidat c " + "JOIN candidature ca ON c.idcandidat = ca.idcandidat " + "WHERE ca.idoffre = ?";
-
-        try {
-            PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setInt(1, idOffre);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Candidat candidat = new Candidat();
-                candidat.setIdCandidat(rs.getInt("idcandidat"));
-                candidat.setNom(rs.getString("nom"));
-                candidat.setPrenom(rs.getString("prenom"));
-                candidat.setEmail(rs.getString("email"));
-                candidat.setTel(rs.getString("tel"));
-
-                candidats.add(candidat);
-            }
-
-        } catch (SQLException e)
-        {
-            System.out.println("Erreur SQL : " + e.getMessage());
-        }
-
-        return candidats;
-    }
 
 
 
