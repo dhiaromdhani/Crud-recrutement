@@ -1,5 +1,7 @@
 package Controllers;
 
+import org.controlsfx.control.Notifications;
+import javafx.geometry.Pos;
 import Services.Admin;
 import Utils.Database;
 import javafx.event.ActionEvent;
@@ -51,42 +53,41 @@ public class AdminCandidature implements Initializable {
 
     private void loadCandidatures() {
         cardContainer.getChildren().clear();
-        String sql = "SELECT ca.idcandidat, ca.idoffre, c.nom, c.prenom, o.titre, ca.dateCandidature, ca.statut " +
-                "FROM candidature ca " +
-                "JOIN candidat c ON ca.idcandidat = c.idcandidat " +
-                "JOIN offre o ON ca.idoffre = o.idoffre";
+        String sql = """
+        SELECT ca.idcandidat, ca.idoffre, c.nom, c.prenom, o.titre, ca.dateCandidature, ca.statut
+        FROM candidature ca
+        JOIN candidat c ON ca.idcandidat = c.idcandidat
+        JOIN offre o ON ca.idoffre = o.idoffre
+        """;
+
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 int idC = rs.getInt("idcandidat");
                 int idO = rs.getInt("idoffre");
-                String nom = rs.getString("nom");
-                String prenom = rs.getString("prenom");
-                String titre = rs.getString("titre");
-                String date = rs.getString("dateCandidature");
-                String statut = rs.getString("statut");
+                String nom     = rs.getString("nom");
+                String prenom  = rs.getString("prenom");
+                String titre   = rs.getString("titre");
+                String date    = rs.getString("dateCandidature");
+                String statut  = rs.getString("statut");
 
-                // Création de la carte HBox
+
                 HBox card = new HBox(10);
-                card.setPadding(new Insets(10));
-                card.setStyle("-fx-background-color: #f2f2f2; -fx-border-color: #ccc;");
+                card.getStyleClass().add("card");
 
-                Label label = new Label(nom + " " + prenom + " - " + titre +
-                        " (" + statut + ") [" + date + "]");
+                Label label = new Label(nom + " " + prenom + " - " + titre + " (" + statut + ") [" + date + "]");
+
                 card.getChildren().add(label);
-
-                // Événement de sélection
                 card.setOnMouseClicked(e -> {
                     selectedIdCandidat = idC;
-                    selectedIdOffre = idO;
-                    selectedCard = card;
+                    selectedIdOffre    = idO;
+                    selectedCard       = card;
 
-                    // surbrillance
                     for (Node node : cardContainer.getChildren()) {
-                        node.setStyle("-fx-background-color: #f2f2f2; -fx-border-color: #ccc;");
+                        node.getStyleClass().remove("selected-card");
                     }
-                    card.setStyle("-fx-background-color: #d0f0d0; -fx-border-color: #00aa00;");
+                    card.getStyleClass().add("selected-card");
                 });
 
                 cardContainer.getChildren().add(card);
@@ -97,14 +98,25 @@ public class AdminCandidature implements Initializable {
         }
     }
 
+
     @FXML
     private void accepterCandidature(ActionEvent event) {
         updateStatut("Acceptée");
+        Notifications.create()
+                .title("Candidature acceptée")
+                .text("Vous venez d’accepter cette candidature.")
+                .position(Pos.TOP_RIGHT)
+                .showConfirm();
     }
 
     @FXML
     private void refuserCandidature(ActionEvent event) {
         updateStatut("Refusée");
+        Notifications.create()
+                .title("Candidature refusée")
+                .text("Vous venez de refuser cette candidature.")
+                .position(Pos.TOP_RIGHT)
+                .showError();
     }
 
     private void updateStatut(String statut) {

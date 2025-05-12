@@ -8,26 +8,29 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="500" prefWidth="600" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.OffreparIDcandidat">
+<AnchorPane prefHeight="500" prefWidth="600" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.OffreparIDcandidat" stylesheets="@styles/app.css">
 
     <children>
-        <VBox spacing="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10">
-            <!-- Saisie de l'ID du candidat -->
-            <HBox spacing="10">
+        <VBox spacing="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+
+            <!-- Zone de saisie -->
+            <HBox spacing="10.0">
                 <Label text="ID du Candidat :" />
                 <TextField fx:id="idCandidatField" promptText="Ex: 1" />
-                <Button onAction="#handleAfficherOffres" text="Afficher Offres" />
-            <Button mnemonicParsing="false" onAction="#RetourAceuil" text="Retour page d'acceuil" />
+                <Button text="Afficher Offres" onAction="#handleAfficherOffres" />
+                <Button text="Retour page d'accueil" onAction="#RetourAceuil" />
             </HBox>
 
-            <Label style="-fx-font-size: 16px;" text="Liste des Offres" />
+            <!-- Titre -->
+            <Label text="Liste des Offres" styleClass="section-title" />
 
-            <!-- Card View des offres -->
-            <ScrollPane fitToWidth="true" prefHeight="400">
+            <!-- Conteneur des cartes -->
+            <ScrollPane fitToWidth="true" prefHeight="400.0">
                 <content>
-                    <VBox fx:id="cardContainer" spacing="10" />
+                    <VBox fx:id="cardContainer" spacing="10.0" />
                 </content>
             </ScrollPane>
+
         </VBox>
     </children>
 </AnchorPane>

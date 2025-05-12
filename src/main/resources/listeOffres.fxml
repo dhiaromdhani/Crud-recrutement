@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ListeOffres">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ListeOffres">
 
     <children>
         <!-- Conteneur de cartes pour les offres -->
@@ -17,5 +17,6 @@
 
         <!-- Bouton Postuler -->
         <Button layoutX="480.0" layoutY="350.0" mnemonicParsing="false" onAction="#Postuler" text="Postuler" />
+      <Button layoutX="395.0" layoutY="350.0" mnemonicParsing="false" onAction="#Fermer" prefHeight="26.0" prefWidth="70.0" text="Fermer" />
     </children>
 </AnchorPane>

@@ -69,14 +69,14 @@ public class CandidatparIDoffre implements Initializable {
         for (Candidat c : candidats) {
             HBox card = new HBox(10);
             card.setPadding(new Insets(10));
-            card.setStyle("-fx-background-color:#fafafa; -fx-border-color:#ccc;");
+            card.getStyleClass().add("card"); // Appliquer la classe CSS
 
             VBox info = new VBox(4);
             info.getChildren().addAll(
-                    new Label("ID      : " + c.getIdCandidat()),
-                    new Label("Nom     : " + c.getNom()),
-                    new Label("Prénom  : " + c.getPrenom()),
-                    new Label("Email   : " + c.getEmail()),
+                    new Label("ID       : " + c.getIdCandidat()),
+                    new Label("Nom      : " + c.getNom()),
+                    new Label("Prénom   : " + c.getPrenom()),
+                    new Label("Email    : " + c.getEmail()),
                     new Label("Téléphone: " + c.getTel())
             );
             card.getChildren().add(info);
@@ -84,4 +84,5 @@ public class CandidatparIDoffre implements Initializable {
             cardContainer.getChildren().add(card);
         }
     }
+
 }

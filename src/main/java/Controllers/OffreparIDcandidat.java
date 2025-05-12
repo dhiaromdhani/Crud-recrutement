@@ -68,11 +68,11 @@ public class OffreparIDcandidat implements Initializable {
             return;
         }
 
-        // Pour chaque offre, créer une carte HBox
+
         for (Offre o : offres) {
             HBox card = new HBox(10);
             card.setPadding(new Insets(10));
-            card.setStyle("-fx-background-color:#f9f9f9; -fx-border-color:#ccc;");
+            card.getStyleClass().add("card");
 
             VBox info = new VBox(4);
             info.getChildren().addAll(
@@ -84,6 +84,13 @@ public class OffreparIDcandidat implements Initializable {
             );
 
             card.getChildren().add(info);
+
+            card.setOnMouseClicked(e -> {
+                cardContainer.getChildren().forEach(node -> node.getStyleClass().remove("selected-card")
+                );
+
+                card.getStyleClass().add("selected-card");
+            });
             cardContainer.getChildren().add(card);
         }
 

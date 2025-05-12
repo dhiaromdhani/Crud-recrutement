@@ -108,7 +108,7 @@ public class AdminOffresController implements Initializable {
         datePublicationPicker.setValue(null);
         selectedOffre = null;
         if (selectedCard != null) {
-            selectedCard.setStyle("-fx-background-color: #f2f2f2; -fx-border-color: #ccc;");
+            selectedCard.getStyleClass().remove("selected-card");
             selectedCard = null;
         }
     }
@@ -116,6 +116,7 @@ public class AdminOffresController implements Initializable {
     private void loadOffres() {
         cardContainer.getChildren().clear();
         String sql = "SELECT idoffre, titre, description, localisation, datePublication FROM offre";
+
         try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int idOffre = rs.getInt("idoffre");
@@ -125,18 +126,22 @@ public class AdminOffresController implements Initializable {
                 String date = rs.getString("datePublication");
 
                 HBox card = new HBox(10);
-                card.setPadding(new Insets(10));
-                card.setStyle("-fx-background-color: #f2f2f2; -fx-border-color: #ccc; -fx-border-radius: 5;");
+                card.getStyleClass().add("card");
 
                 Label label = new Label(titre + " - " + localisation + " [" + date + "]\n" + description);
+                label.getStyleClass().add("label");
+
                 card.getChildren().add(label);
 
+
                 card.setOnMouseClicked(e -> {
-                    if (selectedCard != null) {
-                        selectedCard.setStyle("-fx-background-color: #f2f2f2; -fx-border-color: #ccc; -fx-border-radius: 5;");
+                    for (Node node : cardContainer.getChildren()) {
+                        node.getStyleClass().remove("selected-card");
                     }
+
+                    card.getStyleClass().add("selected-card");
+
                     selectedCard = card;
-                    card.setStyle("-fx-background-color: #d0f0d0; -fx-border-color: #00aa00; -fx-border-radius: 5;");
                     selectedOffre = new Offre(idOffre, titre, description, localisation, date);
                     populateForm(selectedOffre);
                 });
@@ -147,6 +152,7 @@ public class AdminOffresController implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Erreur SQL", e.getMessage());
         }
     }
+
 
     private void populateForm(Offre o) {
         titreField.setText(o.getTitre());

@@ -42,9 +42,7 @@ public class ListeOffres implements Initializable {
 
         for (Offre o : offres) {
             HBox card = new HBox(10);
-            card.setPadding(new Insets(10));
-            card.setStyle("-fx-background-color:#f0f0f0; -fx-border-color:#ccc;");
-
+            card.getStyleClass().add("card");
             VBox info = new VBox(4);
             info.getChildren().addAll(
                     new Label("Titre       : " + o.getTitre()),
@@ -52,20 +50,28 @@ public class ListeOffres implements Initializable {
                     new Label("Localisation: " + o.getLocalisation()),
                     new Label("Publié le   : " + o.getDatePublication())
             );
-            card.getChildren().add(info);
 
+            card.getChildren().add(info);
+            card.getStyleClass().add("card");
             card.setOnMouseClicked(e -> {
-                // dé‑surligner toutes
-                cardContainer.getChildren().forEach(n ->
-                        n.setStyle("-fx-background-color:#f0f0f0; -fx-border-color:#ccc;")
-                );
-                // surligner la sélection
-                card.setStyle("-fx-background-color:#d0f0d0; -fx-border-color:green;");
+                cardContainer.getChildren().forEach(n -> {
+                    n.getStyleClass().remove("selected-card");
+                    if (!n.getStyleClass().contains("card")) {
+                        n.getStyleClass().add("card");
+                    }
+                });
+                card.getStyleClass().add("selected-card");
                 selectedOffre = o;
             });
 
             cardContainer.getChildren().add(card);
         }
+    }
+
+    @FXML
+    void Fermer(ActionEvent event) {
+        ((Stage)((Node)event.getSource()).getScene().getWindow()).close();
+
     }
 
     /** Ouvre le formulaire de candidature pour l'offre sélectionnée */

@@ -6,7 +6,8 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controllers.AdminOffresController"
-            prefWidth="800.0" prefHeight="600.0">
+            prefWidth="800.0" prefHeight="600.0"
+            stylesheets="@styles/app.css">
 
     <VBox spacing="10"
           AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10"
@@ -29,17 +30,19 @@
 
         <!-- Actions -->
         <HBox spacing="10">
-            <Button text="Ajouter"      onAction="#ajouterOffre"/>
-            <Button text="Modifier"     onAction="#modifierOffre"/>
-            <Button text="Supprimer"    onAction="#supprimerOffre"/>
-            <Button text="Réinitialiser" onAction="#resetForm"/>
-            <Button text="Retour Accueil" onAction="#RetourpageAcceuil"/>
+            <Button text="Ajouter"       onAction="#ajouterOffre"      styleClass="button"/>
+            <Button text="Modifier"      onAction="#modifierOffre"     styleClass="button"/>
+            <Button text="Supprimer"     onAction="#supprimerOffre"    styleClass="button"/>
+            <Button text="Réinitialiser" onAction="#resetForm"         styleClass="button"/>
+            <Button text="Retour Accueil" onAction="#RetourpageAcceuil" styleClass="button"/>
         </HBox>
 
         <!-- Conteneur de cartes -->
         <ScrollPane fitToWidth="true" prefHeight="400">
             <content>
-                <VBox fx:id="cardContainer" spacing="10"/>
+                <VBox fx:id="cardContainer"
+                      spacing="10"
+                      styleClass="card-container"/>
             </content>
         </ScrollPane>
     </VBox>

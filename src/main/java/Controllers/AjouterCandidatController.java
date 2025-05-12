@@ -1,5 +1,7 @@
 package Controllers;
 
+import org.controlsfx.control.Notifications;
+import javafx.geometry.Pos;
 import Models.Candidat;
 import Services.ServiceCandidat;
 import javafx.event.ActionEvent;
@@ -11,7 +13,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import Services.QRCodeGenerator;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.control.Button;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TextField;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +33,8 @@ public class AjouterCandidatController implements Initializable {
     @FXML private TextField txtEmail;
     @FXML private TextField txtTelephone;
     @FXML private DatePicker dateCandidaturePicker;
+    @FXML private ImageView qrImageView;
+    @FXML private Button btnGenererQR;
 
     @FXML private Button btnAjouter;
     @FXML private Button btnModifier;
@@ -36,13 +47,33 @@ public class AjouterCandidatController implements Initializable {
     private ServiceCandidat serviceCandidat;
     private Candidat selectedCandidat;
     private int selectedOfferId;
+    private int selectedCandidateId;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         serviceCandidat = new ServiceCandidat();
         dateCandidaturePicker.setValue(LocalDate.now());
         reloadTable();
+
+        setupCarets(txtNom);
+        setupCarets(txtPrenom);
+        setupCarets(txtEmail);
+        setupCarets(txtTelephone);
+
     }
+
+
+    private void setupCarets(TextField tf) {
+        tf.focusedProperty().addListener((obs, WasF, isNowF) -> {
+            if (isNowF) {
+                tf.positionCaret(tf.getText().length());
+            }
+        });
+        tf.setOnMouseClicked(e -> tf.positionCaret(tf.getText().length()));
+    }
+
+
+
 
     /** Reconstruit toutes les cartes à partir de la base. */
     private void reloadTable() {
@@ -52,7 +83,7 @@ public class AjouterCandidatController implements Initializable {
         for (Candidat c : list) {
             HBox card = new HBox(10);
             card.setPadding(new Insets(10));
-            card.setStyle("-fx-background-color:#f2f2f2; -fx-border-color:#ccc;");
+            card.getStyleClass().add("card");  // Appliquer la classe CSS "card"
 
             VBox info = new VBox(4);
             info.getChildren().addAll(
@@ -63,27 +94,43 @@ public class AjouterCandidatController implements Initializable {
             );
             card.getChildren().add(info);
 
-            // Sélection de la carte
+            // Gestion du clic sur la carte
             card.setOnMouseClicked(e -> {
-                // Enlever la surbrillance de toutes
-                cardContainer.getChildren().forEach(node ->
-                        node.setStyle("-fx-background-color:#f2f2f2; -fx-border-color:#ccc;")
-                );
-                // Mettre en surbrillance la carte cliquée
-                card.setStyle("-fx-background-color:#d0f0d0; -fx-border-color:#00aa00;");
-
-                // Mémoriser et préremplir le formulaire
                 selectedCandidat = c;
+                selectedCandidateId = c.getIdCandidat();
+
                 txtNom.setText(c.getNom());
                 txtPrenom.setText(c.getPrenom());
                 txtEmail.setText(c.getEmail());
                 txtTelephone.setText(c.getTel());
                 dateCandidaturePicker.setValue(LocalDate.now());
+
+                // Supprimer la sélection précédente
+                for (Node node : cardContainer.getChildren()) {
+                    node.getStyleClass().remove("selected-card");
+                }
+
+                // Appliquer le style sélectionné
+                card.getStyleClass().add("selected-card");
             });
 
             cardContainer.getChildren().add(card);
         }
     }
+
+    @FXML
+    private void onGenererQR(ActionEvent event) {
+        try {
+
+            String data = "C" + selectedCandidateId + "|O" + selectedOfferId;
+            Image qr = QRCodeGenerator.generateQRCodeImage(data, 200, 200);
+            qrImageView.setImage(qr);   // <<< utiliser setImage(Image)
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR,
+                    "Impossible de générer le QR : " + e.getMessage()).showAndWait();
+        }
+    }
+
 
     @FXML
     private void Ajouter(ActionEvent event) {
@@ -121,10 +168,7 @@ public class AjouterCandidatController implements Initializable {
         }
     }
 
-    @FXML
-    private void Lire(ActionEvent event) {
-        // La lecture est déjà gérée par la sélection dans reloadTable().
-    }
+
 
     @FXML
     private void ValiderDemande(ActionEvent event) {
@@ -134,23 +178,30 @@ public class AjouterCandidatController implements Initializable {
         String tel    = txtTelephone.getText();
         String date   = dateCandidaturePicker.getValue().toString();
 
-        // 1) On cherche d’abord un candidat avec cet email
         Candidat existant = serviceCandidat.findByEmail(email);
         int idCandidat;
         if (existant != null) {
             idCandidat = existant.getIdCandidat();
         } else {
-            // sinon on le crée
+
             Candidat nouveau = new Candidat(0, nom, prenom, email, tel);
             serviceCandidat.add(nouveau);
             idCandidat = nouveau.getIdCandidat();
         }
 
+        selectedCandidateId = idCandidat;
+
         // 2) On crée la candidature en réutilisant idCandidat et l'id de l'offre
         serviceCandidat.postuler(idCandidat, selectedOfferId, date);
 
+        Notifications.create()
+                .title("Candidature enregistrée")
+                .text("Votre candidature est passée avec succès !")
+                .position(Pos.TOP_RIGHT)
+                .showInformation();
+
         new Alert(Alert.AlertType.INFORMATION, "Candidature enregistrée !").showAndWait();
-        ((Stage)((Node)event.getSource()).getScene().getWindow()).close();
+        //((Stage)((Node)event.getSource()).getScene().getWindow()).close();
     }
 
     /** Vide le formulaire et réinitialise la surbrillance. */
@@ -161,12 +212,27 @@ public class AjouterCandidatController implements Initializable {
         txtTelephone.clear();
         dateCandidaturePicker.setValue(LocalDate.now());
         selectedCandidat = null;
-        cardContainer.getChildren().forEach(node ->
-                node.setStyle("-fx-background-color:#f2f2f2; -fx-border-color:#ccc;")
-        );
+        cardContainer.getChildren().forEach(node -> {
+            node.getStyleClass().remove("selected-card");
+            if (!node.getStyleClass().contains("card")) {
+                node.getStyleClass().add("card");
+            }
+        });
     }
 
     public void setSelectedOfferId(int offerId) {
         this.selectedOfferId = offerId;
     }
+    public void setSelectedCandidateId(int candId) {
+        this.selectedCandidateId = candId;
+
+}
+    @FXML
+    void Fermer(ActionEvent event) {
+
+        ((Stage)((Node)event.getSource()).getScene().getWindow()).close();
+
+    }
+
+
 }
